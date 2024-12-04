@@ -1,5 +1,4 @@
 # LOG8415E_final_assignment
-# README.md
 
 ## Project Overview
 
