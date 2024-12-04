@@ -1,0 +1,17 @@
+{
+    "mysql-manager": {
+        "InstanceID": "i-0d1540257ed7d7ad7",
+        "PublicIP": "100.25.223.54",
+        "PrivateIP": "10.0.1.124"
+    },
+    "mysql-worker-1": {
+        "InstanceID": "i-02d5a7cce0728d827",
+        "PublicIP": "54.209.115.75",
+        "PrivateIP": "10.0.1.73"
+    },
+    "mysql-worker-2": {
+        "InstanceID": "i-0f2fcfe4cd01ded5b",
+        "PublicIP": "54.173.84.240",
+        "PrivateIP": "10.0.1.77"
+    }
+}
