@@ -1,0 +1,32 @@
+{
+    "mysql-manager": {
+        "InstanceID": "i-0d1540257ed7d7ad7",
+        "PublicIP": "100.25.223.54",
+        "PrivateIP": "10.0.1.124"
+    },
+    "mysql-worker-1": {
+        "InstanceID": "i-02d5a7cce0728d827",
+        "PublicIP": "54.209.115.75",
+        "PrivateIP": "10.0.1.73"
+    },
+    "mysql-worker-2": {
+        "InstanceID": "i-0f2fcfe4cd01ded5b",
+        "PublicIP": "54.173.84.240",
+        "PrivateIP": "10.0.1.77"
+    },
+    "proxy_instance": {
+        "InstanceID": "i-0024258d7e144bce4",
+        "PublicIP": "54.173.168.67",
+        "PrivateIP": "10.0.1.139"
+    },
+    "trusted_instance": {
+        "InstanceID": "i-0f8d4018ef185a8b1",
+        "PublicIP": "35.175.132.228",
+        "PrivateIP": "10.0.1.8"
+    },
+    "gatekeeper_instance": {
+        "InstanceID": "i-0b6f25fa778b9cf9a",
+        "PublicIP": "100.25.222.197",
+        "PrivateIP": "10.0.1.44"
+    }
+}
