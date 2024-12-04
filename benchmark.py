@@ -35,12 +35,12 @@ def send_request(url, payload=None):
             response = requests.get(url)
         response.raise_for_status()
         end_time = time.time()
-        return end_time - start_time
+        return end_time - start_time, response.json() if response.content else None
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")
-        if hasattr(e.response, 'text'):
+        if hasattr(e, 'response') and e.response:
             print(f"Response content: {e.response.text}")
-        return None
+        return None, None
 
 def benchmark_requests(gatekeeper_ip):
     """Send read and write requests and log the results."""
@@ -48,36 +48,64 @@ def benchmark_requests(gatekeeper_ip):
     write_times = []
     
     # URLs for read and write operations
-    READ_URL = f"http://{gatekeeper_ip}:8000/read"
     WRITE_URL = f"http://{gatekeeper_ip}:8000/write"
-    
-    # Sending read requests
-    print(f"Sending {NUM_REQUESTS} read requests to {READ_URL}...")
-    for i in range(NUM_REQUESTS):
-        response_time = send_request(READ_URL)
-        if response_time:
-            read_times.append(response_time)
+    READ_URL_DIRECT = f"http://{gatekeeper_ip}:8000/read/direct"
+    READ_URL_RANDOM = f"http://{gatekeeper_ip}:8000/read/random"
+    READ_URL_CUSTOMIZED = f"http://{gatekeeper_ip}:8000/read/customized"
     
     # Sending write requests
     print(f"Sending {NUM_REQUESTS} write requests to {WRITE_URL}...")
     for i in range(NUM_REQUESTS):
-        payload = {"key": f"key{i}", "value": f"value{i}"}
-        response_time = send_request(WRITE_URL, payload=payload)
+        payload = {
+            "query": f"INSERT INTO actor (first_name, last_name, last_update) VALUES ('Name{i}', 'Surname{i}', NOW());"
+        }
+        response_time, response_data = send_request(WRITE_URL, payload=payload)
         if response_time:
             write_times.append(response_time)
+            print(f"Write #{i + 1}: Time={response_time:.2f}s, Response={response_data}")
+    
+    # Sending read requests (direct)
+    print(f"\nSending {NUM_REQUESTS} direct read requests to {READ_URL_DIRECT}...")
+    for i in range(NUM_REQUESTS):
+        query_param = {"query": f"SELECT * FROM actor WHERE first_name='Name{i}';"}
+        response_time, response_data = send_request(f"{READ_URL_DIRECT}?query={query_param['query']}")
+        if response_time:
+            read_times.append(response_time)
+            print(f"Read Direct #{i + 1}: Time={response_time:.2f}s, Response={response_data}")
+    
+    # Sending read requests (random)
+    print(f"\nSending {NUM_REQUESTS} random read requests to {READ_URL_RANDOM}...")
+    for i in range(NUM_REQUESTS):
+        query_param = {"query": f"SELECT * FROM actor WHERE first_name='Name{i}';"}
+        response_time, response_data = send_request(f"{READ_URL_RANDOM}?query={query_param['query']}")
+        if response_time:
+            read_times.append(response_time)
+            print(f"Read Random #{i + 1}: Time={response_time:.2f}s, Response={response_data}")
+    
+    # Sending read requests (customized)
+    print(f"\nSending {NUM_REQUESTS} customized read requests to {READ_URL_CUSTOMIZED}...")
+    for i in range(NUM_REQUESTS):
+        query_param = {"query": f"SELECT * FROM actor WHERE first_name='Name{i}';"}
+        response_time, response_data = send_request(f"{READ_URL_CUSTOMIZED}?query={query_param['query']}")
+        if response_time:
+            read_times.append(response_time)
+            print(f"Read Customized #{i + 1}: Time={response_time:.2f}s, Response={response_data}")
     
     # Log the results
-    if read_times:
-        print(f"Read Requests: Avg={sum(read_times)/len(read_times):.2f}s, Total={len(read_times)}")
-    else:
-        print("No successful read requests.")
-
     if write_times:
-        print(f"Write Requests: Avg={sum(write_times)/len(write_times):.2f}s, Total={len(write_times)}")
+        avg_write = sum(write_times) / len(write_times)
+        print(f"\nWrite Requests: Avg={avg_write:.2f}s, Total={len(write_times)}")
     else:
         print("No successful write requests.")
+
+    if read_times:
+        avg_read = sum(read_times) / len(read_times)
+        print(f"Read Requests: Avg={avg_read:.2f}s, Total={len(read_times)}")
+    else:
+        print("No successful read requests.")
     
     return read_times, write_times
+
 
 if __name__ == "__main__":
     try:
